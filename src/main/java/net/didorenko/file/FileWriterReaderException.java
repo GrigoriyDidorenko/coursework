@@ -1,23 +1,23 @@
-package net.didorenko.lexer;
+package net.didorenko.file;
 
 /**
- * package: net.didorenko.lexer
+ * package: net.didorenko.file
  * project: coursework
  * class:
  *
  * @author: Grigoriy Didorenko
- * @date: 14.12.2015
+ * @date: 17.12.2015
  */
-public class LexerException extends Exception {
+public class FileWriterReaderException extends Exception {
 
     protected int lineNumber;
 
-    public LexerException(String s, int lineNumber){
+    public FileWriterReaderException(String s, int lineNumber){
         super(s);
         this.lineNumber = lineNumber;
     }
 
-    public LexerException(String s){
+    public FileWriterReaderException(String s){
         super(s);
         this.lineNumber = 0;
     }
