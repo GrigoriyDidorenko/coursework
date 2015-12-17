@@ -12,9 +12,27 @@ import java.util.List;
  */
 public class Node {
 
+    private Rule.Term data;
     private Node parent;
     private List<Node> childs;
-    private int level;
+
+    public Node(Rule.Term data) {
+        this.data = data;
+    }
+
+    public Node(Rule.Term data, Node parent, List<Node> childs) {
+        this.data = data;
+        this.parent = parent;
+        this.childs = childs;
+    }
+
+    public Rule.Term getData() {
+        return data;
+    }
+
+    public void setData(Rule.Term data) {
+        this.data = data;
+    }
 
     public Node getParent() {
         return parent;
@@ -28,15 +46,12 @@ public class Node {
         return childs;
     }
 
+    public void addChild(Node child){
+        this.childs.add(child);
+    }
+
     public void setChilds(List<Node> childs) {
         this.childs = childs;
     }
 
-    public int getLevel() {
-        return level;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
 }

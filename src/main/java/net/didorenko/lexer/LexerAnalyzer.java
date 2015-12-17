@@ -18,14 +18,8 @@ import java.util.regex.Pattern;
 public class LexerAnalyzer {
 
     private String incomeText;
+    private static ArrayList<Token> tokens = new ArrayList<>();
 
-    public static void main(String[] args) throws LexerException {
-        String input = "while if 1 zsss1 " +
-                "5";
-        ArrayList<Token> tokens = lex(input);
-        for (Token token : tokens)
-            System.out.println(token);
-    }
 
 /*    public static ArrayList<Token> lex(String[] lines) {
 
@@ -40,8 +34,8 @@ public class LexerAnalyzer {
             Matcher matcher = tokenPatterns.matcher(lines[i]);
             while (matcher.find()) {
 
-                if (matcher.group(TokenType.NUMBER.name()) != null) {
-                    tokens.add(new Token(TokenType.NUMBER, matcher.group(TokenType.NUMBER.name()), i));
+                if (matcher.group(TokenType.INT_NUMBER.name()) != null) {
+                    tokens.add(new Token(TokenType.INT_NUMBER, matcher.group(TokenType.INT_NUMBER.name()), i));
                     continue;
                 } else if (matcher.group(TokenType.MATH.name()) != null) {
                     tokens.add(new Token(TokenType.MATH, matcher.group(TokenType.MATH.name()), i));
@@ -68,7 +62,6 @@ public class LexerAnalyzer {
     }
 
     public static ArrayList<Token> lex(String incomeText) throws LexerException {
-        ArrayList<Token> tokens = new ArrayList<>();
         String[] lines = splitByLines(incomeText);
         for (int i = 0; i < lines.length; i++) {
             String[] words = splitEachLine(lines[i]);

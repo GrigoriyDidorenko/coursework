@@ -8,12 +8,14 @@ package net.didorenko;
  * @author: Grigoriy Didorenko
  * @date: 17.12.2015
  */
-public class ThreeElement {
+public class Rule {
 
     private Term parents;
     private Term[] childs;
 
-    public ThreeElement(Term parents, Term[] childs) {
+    public Rule(){}
+
+    public Rule(Term parents, Term[] childs) {
         this.parents = parents;
         this.childs = childs;
     }

@@ -11,7 +11,7 @@ package net.didorenko;
 public class Token {
 
     private TokenType type;
-    private String data;
+    private String value;
     private int lineNumber;
 
     public TokenType getType() {
@@ -22,12 +22,12 @@ public class Token {
         this.type = type;
     }
 
-    public String getData() {
-        return data;
+    public String getValue() {
+        return value;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public int getLineNumber() {
@@ -38,14 +38,14 @@ public class Token {
         this.lineNumber = lineNumber;
     }
 
-    public Token(TokenType type, String data, int lineNumber) {
+    public Token(TokenType type, String value, int lineNumber) {
         this.type = type;
-        this.data = data;
+        this.value = value;
         this.lineNumber = lineNumber;
     }
 
     @Override
     public String toString() {
-        return String.format("(%s %s)", type.name(), data);
+        return String.format("(%s %s)", type.name(), value);
     }
 }
