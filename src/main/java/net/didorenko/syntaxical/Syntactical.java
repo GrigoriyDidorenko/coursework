@@ -1,19 +1,19 @@
 package net.didorenko.syntaxical;
 
+import net.didorenko.exception.LineFounder;
 import net.didorenko.general.Grammar;
-import net.didorenko.general.LanguageKeywords;
+import net.didorenko.general.Keyword;
 import net.didorenko.general.Rule;
+import net.didorenko.lexer.Lexical;
 import net.didorenko.tree.Node;
 import net.didorenko.tree.node.parts.Variable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Syntactical {
+public class Syntactical extends LineFounder {
 
-    private static Grammar grammar = Grammar.getInstance();
-    private static Rule[] rules = grammar.RULES;
-    private static ArrayList<Integer> lineIndexes;
+
     private static Rule.Term[] terms;
     private static Node<Rule.Term> treeRoot;
     private static int currentPosition = 0;
@@ -22,14 +22,13 @@ public class Syntactical {
     private static String lastType = "";
     private static boolean inBody = false;
 
-    public static void inspect(ArrayList<String> tokens, ArrayList<Integer> newlineIndexes) throws UnexpectedSymbolException, UndeclaredVariableException {
-        postConstruct(tokens, newlineIndexes);
-        treeRoot = new Node<>(new Rule.Term(false, grammar.PROGRAM));
+    public static void inspect() throws UnexpectedSymbolException, UndeclaredVariableException {
+        postConstruct(Lexical.getTokens());
+        treeRoot = new Node<>(new Rule.Term(false, Grammar.getInstance().PROGRAM));
         inspectNode(treeRoot);
     }
 
-    public static void postConstruct(ArrayList<String> tokens, ArrayList<Integer> lineIndexesFromLex) {
-        lineIndexes = lineIndexesFromLex;
+    public static void postConstruct(ArrayList<String> tokens) {
         terms = new Rule.Term[tokens.size()];
         for (int i = 0; i < tokens.size(); i++) terms[i] = new Rule.Term(true, tokens.get(i));
     }
@@ -48,7 +47,7 @@ public class Syntactical {
 
     private static void inspectNode(Node<Rule.Term> inspectingNode) throws UnexpectedSymbolException, UndeclaredVariableException {
         Rule rightRule = smartFindRule(inspectingNode.getData().getString());
-        if (rightRule.getChildren()[0].getString().equals(grammar.E)) {
+        if (rightRule.getChildren()[0].getString().equals(Grammar.getInstance().E)) {
             clean(inspectingNode);
             return;
         }
@@ -78,10 +77,10 @@ public class Syntactical {
 
     private static Rule smartFindRule(String string) throws UnexpectedSymbolException, UndeclaredVariableException {
         ArrayList<Rule> fondRules = new ArrayList<>();
-        for (Rule rule : rules) if (rule.getParent().getString().equals(string)) fondRules.add(rule);
+        for (Rule rule : Grammar.getInstance().RULES) if (rule.getParent().getString().equals(string)) fondRules.add(rule);
         if (fondRules.size() == 1) return fondRules.get(0);
 
-        Grammar.RuleMatcher[] helper = grammar.HELPER;
+        Grammar.RuleMatcher[] helper = Grammar.getInstance().HELPER;
         for (int i = 0; i < fondRules.size(); i++) {
             Rule rule = fondRules.get(i);
             for (Grammar.RuleMatcher matcher : helper) {
@@ -125,7 +124,7 @@ public class Syntactical {
 
     private static void analyzeToken(int inTermsPosition) throws UndeclaredVariableException, UnexpectedSymbolException {
         String termString = terms[inTermsPosition].getString();
-        if (termString.equals(LanguageKeywords.RESERVED_WORDS[1]/* begin */)) inBody = true;
+        if (termString.equals(Keyword.RESERVED_WORDS[1]/* begin */)) inBody = true;
 
         //������������� �� ������ � ������. ������: -4 ��� -name
         boolean isMinus = (termString.charAt(0) == '-') && (termString.length() != 1);
@@ -140,7 +139,7 @@ public class Syntactical {
             }
         }
         if (isNumber) {
-            Rule.Term newTerm = new Rule.Term(false, grammar.NUMBER);
+            Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().NUMBER);
             if (isMinus) termString = "-" + termString;
             newTerm.setValue(termString);
             terms[inTermsPosition] = newTerm;
@@ -148,8 +147,8 @@ public class Syntactical {
         }
 
         //�������� �� ���
-        if (LanguageKeywords.isType(termString)) {
-            Rule.Term newTerm = new Rule.Term(false, grammar.TYPE);
+        if (Keyword.isType(termString)) {
+            Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().TYPE);
             newTerm.setValue(termString);
             terms[inTermsPosition] = newTerm;
             lastType = termString;
@@ -157,45 +156,45 @@ public class Syntactical {
         }
 
         //�������� �� ��� ������
-        if (LanguageKeywords.isMethod(termString)) {
-            Rule.Term newTerm = new Rule.Term(false, grammar.MET_NAME);
+        if (Keyword.isMethod(termString)) {
+            Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().MET_NAME);
             newTerm.setValue(termString);
             terms[inTermsPosition] = newTerm;
             return;
         }
 
         //�������� �� ��� ����������
-        if (LanguageKeywords.isMathFunction(termString)) {
-            Rule.Term newTerm = new Rule.Term(false, grammar.FUNC_NAME);
+        if (Keyword.isMathFunction(termString)) {
+            Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().FUNC_NAME);
             newTerm.setValue(termString);
             terms[inTermsPosition] = newTerm;
             return;
         }
 
         //�������� �� BOOL_SIGN
-        if (termString.equals(LanguageKeywords.BOOL_OPERATIONS[0]/* < */) ||
-                termString.equals(LanguageKeywords.BOOL_OPERATIONS[1]/* > */) ||
-                termString.equals(LanguageKeywords.BOOL_OPERATIONS[2]/* = */) ||
-                termString.equals(LanguageKeywords.BOOL_OPERATIONS[3]/* != */)) {
-            Rule.Term newTerm = new Rule.Term(false, grammar.BOOL_SIGN);
+        if (termString.equals(Keyword.BOOL_OPERATIONS[0]/* < */) ||
+                termString.equals(Keyword.BOOL_OPERATIONS[1]/* > */) ||
+                termString.equals(Keyword.BOOL_OPERATIONS[2]/* = */) ||
+                termString.equals(Keyword.BOOL_OPERATIONS[3]/* != */)) {
+            Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().BOOL_SIGN);
             newTerm.setValue(termString);
             terms[inTermsPosition] = newTerm;
             return;
         }
 
         //�������� �� HP_SIGN
-        if (termString.equals(LanguageKeywords.MATH_OPERATIONS[2]/* * */) ||
-                termString.equals(LanguageKeywords.MATH_OPERATIONS[3]/* / */)) {
-            Rule.Term newTerm = new Rule.Term(false, grammar.HP_SIGN);
+        if (termString.equals(Keyword.MATH_OPERATIONS[2]/* * */) ||
+                termString.equals(Keyword.MATH_OPERATIONS[3]/* / */)) {
+            Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().HP_SIGN);
             newTerm.setValue(termString);
             terms[inTermsPosition] = newTerm;
             return;
         }
 
         //�������� �� LP_SIGN
-        if (termString.equals(LanguageKeywords.MATH_OPERATIONS[0]/* + */) ||
-                termString.equals(LanguageKeywords.MATH_OPERATIONS[1]/* - */)) {
-            Rule.Term newTerm = new Rule.Term(false, grammar.LP_SIGN);
+        if (termString.equals(Keyword.MATH_OPERATIONS[0]/* + */) ||
+                termString.equals(Keyword.MATH_OPERATIONS[1]/* - */)) {
+            Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().LP_SIGN);
             newTerm.setValue(termString);
             terms[inTermsPosition] = newTerm;
             return;
@@ -206,25 +205,24 @@ public class Syntactical {
                 && terms[inTermsPosition - 1].getString().equals("\"")
                 && terms[inTermsPosition + 1].getString().equals("\"")
                 && !termString.equals(",")) {
-            Rule.Term newTerm = new Rule.Term(false, grammar.STRING);
+            Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().STRING);
             termString = termString.replace("\\w", " ");
             newTerm.setValue(termString);
             terms[inTermsPosition] = newTerm;
             return;
         }
 
-        //�������� �� �� (�� ����������������� �����, ���������� � �����, �� � �������)
         if (Character.isAlphabetic(termString.charAt(0))
-                && !LanguageKeywords.isRegisteredWord(termString)
-                && !grammar.isNonTerminal(termString)
+                && !Keyword.isRegisteredWord(termString)
+                && !Grammar.getInstance().isNonTerminal(termString)
                 && !terms[inTermsPosition - 1].getString().equals("\"")) {
-            Rule.Term newTerm = new Rule.Term(false, grammar.ID);
-            if (!inBody || terms[inTermsPosition + 1].getString().equals(":=")) newTerm.setString(grammar.ONLY_ID);
+            Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().ID);
+            if (!inBody || terms[inTermsPosition + 1].getString().equals(":=")) newTerm.setString(Grammar.getInstance().ONLY_ID);
 
             if (!inBody) {
                 if (findIdDataByVariableName(termString) != null)
                     throw new UnexpectedSymbolException("Such variable \"" +
-                            termString + "\" is already defined. Change this at [" + generateProblemPosition(inTermsPosition) + "]");
+                            termString + "\" is already defined. Change this at [" + findExceptionPosition(inTermsPosition, Lexical.getLineIndexes()) + "]");
                 Variable newNodeVariable = new Variable(termString, lastType);
                 newTerm.setVariable(newNodeVariable);
                 idArray.add(newNodeVariable);
@@ -232,7 +230,7 @@ public class Syntactical {
                 Variable variable = findIdDataByVariableName(termString);
                 if (variable == null) {
                     throw new UndeclaredVariableException("Don't know variable \"" + termString + "\" at [" +
-                            generateProblemPosition(inTermsPosition) + "]" + ". Define it at VAR section. \t");
+                            findExceptionPosition(inTermsPosition, Lexical.getLineIndexes()) + "]" + ". Define it at VAR section. \t");
                 }
                 newTerm.setVariable(variable);
             }
@@ -243,14 +241,14 @@ public class Syntactical {
 
     private static boolean doDifferentScan(Rule rule) throws UndeclaredVariableException, UnexpectedSymbolException {
         analyzeToken(currentPosition);
-        int ruleIndex = Arrays.asList(rules).indexOf(rule);
+        int ruleIndex = Arrays.asList(Grammar.getInstance().RULES).indexOf(rule);
         switch (ruleIndex) {
             case 9: {
                 String s = terms[currentPosition].getString();
-                return s.equals(grammar.ONLY_ID)
-                        || s.equals(LanguageKeywords.RESERVED_WORDS[2]/* if */)
-                        || s.equals(LanguageKeywords.RESERVED_WORDS[4]/* while */)
-                        || s.equals(grammar.MET_NAME);
+                return s.equals(Grammar.getInstance().ONLY_ID)
+                        || s.equals(Keyword.RESERVED_WORDS[2]/* if */)
+                        || s.equals(Keyword.RESERVED_WORDS[4]/* while */)
+                        || s.equals(Grammar.getInstance().MET_NAME);
             }
         }
         return false;
@@ -266,17 +264,7 @@ public class Syntactical {
 
     private static Rule error() throws UnexpectedSymbolException {
         throw new UnexpectedSymbolException("Check corrective near symbol \"" +
-                terms[currentPosition].smartGetString() + "\" at [" + generateProblemPosition(currentPosition) + "]");
-    }
-
-    private static String generateProblemPosition(int inTermsPosition) {
-        int lineLumber = -1, inLinePosition = 0;
-        for (int i = 0; i < lineIndexes.size(); i++) {
-            if (lineIndexes.get(i) <= inTermsPosition) lineLumber = i;
-        }
-        for (int i = lineIndexes.get(lineLumber); i <= inTermsPosition; i++)
-            inLinePosition += terms[i].smartGetString().length();
-        return String.valueOf(++lineLumber) + "," + String.valueOf(inLinePosition);
+                terms[currentPosition].smartGetString() + "\" at line [" + findExceptionPosition(currentPosition, Lexical.getLineIndexes()) + "]");
     }
 
     private static Variable findIdDataByVariableName(String variableName) {

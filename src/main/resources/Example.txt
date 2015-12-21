@@ -1,0 +1,18 @@
+var
+     int : counter, N;
+	 double : rez;
+begin
+	counter:=1;
+	rez:=exp(1.0,2);
+	rez:=sqrt(1.0);
+	N:=5;
+	if (counter < N)
+	begin
+	counter := counter+1;
+	end
+	while (counter < N)
+	begin
+		counter := counter+1;
+	end
+	writeln("So,\wthe\wfactorial\wof\w", N, "\wis\w", rez);
+end

@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 
 public class ReadWriteFile {
 
-    public static String load(String path) throws ReadWriteException {
+    public static String loadFromFile(String path) throws ReadWriteException {
         byte[] encoded;
         try {
             encoded = Files.readAllBytes(Paths.get(path));
@@ -20,11 +20,11 @@ public class ReadWriteFile {
         return new String(encoded, Charset.defaultCharset());
     }
 
-    public static void save(String path, String code) throws FileNotFoundException {
+    public static void saveToFile(String path, String code) throws FileNotFoundException {
         try (PrintWriter out = new PrintWriter(path)) {
             out.print(code);
         } catch (FileNotFoundException e) {
-            System.out.println("File to save not found" + path);
+            System.out.println("File to saveToFile not found" + path);
         }
     }
 

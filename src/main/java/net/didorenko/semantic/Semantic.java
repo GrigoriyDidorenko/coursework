@@ -1,53 +1,37 @@
 package net.didorenko.semantic;
 
+import net.didorenko.exception.LineFounder;
 import net.didorenko.general.Grammar;
 import net.didorenko.general.Rule;
+import net.didorenko.syntaxical.Syntactical;
 import net.didorenko.tree.Node;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class Semantic {
+public class Semantic extends LineFounder {
 
-    private static final int TYPE_UNDEFINED = -1;
-    private static final int TYPE_INT = 1;
-    private static final int TYPE_DOUBLE = 2;
-    private static final int TYPE_STRING = 3;
+    private static final int UNDEFINED = -1;
+    private static final int INT = 1;
+    private static final int DOUBLE = 2;
+    private static final int STRING = 3;
 
-    private static Grammar grammar = Grammar.getInstance();
-    private static ArrayList<Integer> newlineIndexes;
-    private  static Rule.Term[] terms;
-    private static Node<Rule.Term> treeRoot;
+    private static Rule.Term[] terms;
 
-    public Semantic(Node<Rule.Term> treeRoot, Rule.Term[] terms, ArrayList<Integer> newlineIndexes) {
-        this.treeRoot = treeRoot;
-        this.terms = terms;
-        this.newlineIndexes = newlineIndexes;
-    }
 
-    private static String generateProblemPosition(Rule.Term problemTerm) {
-        int inTermsPosition = Arrays.asList(terms).indexOf(problemTerm);
-        int lineLumber = -1, inLinePosition = 0;
-        for (int i = 0; i < newlineIndexes.size(); i++) {
-            if (newlineIndexes.get(i) <= inTermsPosition) lineLumber = i;
-        }
-        for (int i = newlineIndexes.get(lineLumber); i <= inTermsPosition; i++)
-            inLinePosition += terms[i].smartGetString().length();
-        return String.valueOf(++lineLumber) + ":" + String.valueOf(inLinePosition);
-    }
 
     private static void checkIsCorrectType(Node<Rule.Term> valueNode, int expectedType) throws WrongTypeException, LogicException {
         checkIsCorrectHpMExp(valueNode.getChildAt(0), expectedType);
         if (valueNode.getChildren().size() == 2) {
-            if (expectedType == TYPE_STRING)
+            if (expectedType == STRING)
                 throw new WrongTypeException("Not allowed math opetarions with string ["
-                        + generateProblemPosition(valueNode.getChildAt(1).getChildAt(0).getData()) + "]");
+                        + findExceptionPosition(terms, valueNode.getChildAt(1).getChildAt(0).getData()) + "]");
             checkIsCorrectType(valueNode.getChildAt(1).getChildAt(1), expectedType);
         }
     }
 
-    public static void check(Node<Rule.Term> treeRoot, Rule.Term[] terms, ArrayList<Integer> newlineIndexes) throws LogicException, WrongTypeException {
-        inspectNode(treeRoot);
+    public static void check() throws LogicException, WrongTypeException {
+        terms = Syntactical.getTerms();
+        inspectNode(Syntactical.getTreeRoot());
     }
 
 
@@ -83,20 +67,20 @@ public class Semantic {
     }
 
     private static void inspectWrongTypes(Node<Rule.Term> inspectingNode) throws WrongTypeException, LogicException {
-        int expectedType = TYPE_UNDEFINED;
+        int expectedType = UNDEFINED;
         switch (inspectingNode.getData().getString()) {
             case "ASSIGNMENT": {
                 switch (inspectingNode.getChildAt(0).getData().getVariable().getVariableType()) {
                     case "int": {
-                        expectedType = TYPE_INT;
+                        expectedType = INT;
                         break;
                     }
                     case "double": {
-                        expectedType = TYPE_DOUBLE;
+                        expectedType = DOUBLE;
                         break;
                     }
                     case "string": {
-                        expectedType = TYPE_STRING;
+                        expectedType = STRING;
                         break;
                     }
                 }
@@ -106,9 +90,9 @@ public class Semantic {
             case "COND_EXPR": {
                 Node<Rule.Term> firstValueArgumentNode = inspectingNode.getChildAt(0).getChildAt(0).getChildAt(0);
                 expectedType = defineTypeId(firstValueArgumentNode);
-                if (expectedType == TYPE_STRING)
+                if (expectedType == STRING)
                     throw new WrongTypeException("Can't compare strings AT["
-                            + generateProblemPosition(firstValueArgumentNode.getChildAt(0).getData()) + "]");
+                            + findExceptionPosition(terms, firstValueArgumentNode.getChildAt(0).getData()) + "]");
                 checkIsCorrectType(inspectingNode.getChildAt(0), expectedType);
                 checkIsCorrectType(inspectingNode.getChildAt(2), expectedType);
                 break;
@@ -125,19 +109,19 @@ public class Semantic {
 
     private static void checkIsCorrectHpMExp(Node<Rule.Term> hpMExpNode, int expectedType) throws WrongTypeException, LogicException {
         int realType = defineTypeId(hpMExpNode.getChildAt(0));
-        if (realType != expectedType && (!(realType == TYPE_INT && expectedType == TYPE_DOUBLE)
-                || hpMExpNode.getChildAt(0).getChildAt(0).getData().getString().equals(grammar.ID)))
+        if (realType != expectedType && (!(realType == INT && expectedType == DOUBLE)
+                || hpMExpNode.getChildAt(0).getChildAt(0).getData().getString().equals(Grammar.getInstance().ID)))
             throw new WrongTypeException("Wrong type AT["
-                    + generateProblemPosition(hpMExpNode.getChildAt(0).getChildAt(0).getData()) + "]");
+                    + findExceptionPosition(terms, hpMExpNode.getChildAt(0).getChildAt(0).getData()) + "]");
         if (hpMExpNode.getChildren().size() == 2) {
-            if (expectedType == TYPE_STRING)
+            if (expectedType == STRING)
                 throw new WrongTypeException("Can't co any math operations with stringt NEAR["
-                        + generateProblemPosition(hpMExpNode.getChildAt(1).getChildAt(0).getData()) + "]");
+                        + findExceptionPosition(terms, hpMExpNode.getChildAt(1).getChildAt(0).getData()) + "]");
             checkIsCorrectHpMExp(hpMExpNode.getChildAt(1).getChildAt(1), expectedType);
         }
     }
 
-    private  static void checkIsCorrectMethodPars(Node<Rule.Term> metParsNode) throws WrongTypeException, LogicException {
+    private static void checkIsCorrectMethodPars(Node<Rule.Term> metParsNode) throws WrongTypeException, LogicException {
         switch (metParsNode.getParent().getChildAt(0).getData().smartGetString()) {
             case "writeln": {
                 int realType = defineTypeId(metParsNode.getChildAt(0).getChildAt(0).getChildAt(0));
@@ -155,7 +139,7 @@ public class Semantic {
     private static int defineTypeId(Node<Rule.Term> argumentNode) throws WrongTypeException, LogicException {
         if (argumentNode.getChildren().size() == 1) {
             Rule.Term inspectingTerm = argumentNode.getChildAt(0).getData();
-            if (inspectingTerm.getString().equals(grammar.FUNCTION)) {
+            if (inspectingTerm.getString().equals(Grammar.getInstance().FUNCTION)) {
                 switch (argumentNode.getChildAt(0).getChildAt(0).getData().smartGetString()) {
                     case "sqrt": {
                         signatureQuadraticFunction(argumentNode.getChildAt(0), "sqrt");
@@ -170,37 +154,37 @@ public class Semantic {
                         break;
                     }
                 }
-                return TYPE_DOUBLE;
+                return DOUBLE;
             }
             if (inspectingTerm.getVariable() == null) {
-                if (inspectingTerm.getValue().contains(".")) return TYPE_DOUBLE;
-                return TYPE_INT;
+                if (inspectingTerm.getValue().contains(".")) return DOUBLE;
+                return INT;
             } else {
                 switch (inspectingTerm.getVariable().getVariableType()) {
                     case "int": {
-                        return TYPE_INT;
+                        return INT;
                     }
                     case "double": {
-                        return TYPE_DOUBLE;
+                        return DOUBLE;
                     }
                     case "string": {
-                        return TYPE_STRING;
+                        return STRING;
                     }
                 }
             }
         } else {
             Node<Rule.Term> middleChild = argumentNode.getChildAt(1);
-            if (middleChild.getData().getString().equals(grammar.STRING)) return TYPE_STRING;
+            if (middleChild.getData().getString().equals(Grammar.getInstance().STRING)) return STRING;
             return defineTypeId(middleChild.getChildAt(0).getChildAt(0));
         }
-        return TYPE_UNDEFINED;
+        return UNDEFINED;
     }
 
 
     private static void inspectNoVarInCondExp(Node<Rule.Term> condExpNode) throws LogicException {
         if (!(isVariableInValue(condExpNode.getChildAt(0), null) || isVariableInValue(condExpNode.getChildAt(2), null)))
             throw new LogicException("Senseless block NEAR["
-                    + generateProblemPosition(condExpNode.getChildAt(1).getData()) + "]");
+                    + findExceptionPosition(terms, condExpNode.getChildAt(1).getData()) + "]");
     }
 
     private static boolean isVariableInValue(Node<Rule.Term> node, Rule.Term varTerm) {
@@ -227,27 +211,29 @@ public class Semantic {
     private static void signatureExpFunction(Node<Rule.Term> node, String funtionName) throws WrongTypeException, LogicException {
         Node<Rule.Term> expFunction = node.getChildAt(2);
         if (expFunction.getChildren().size() != 2)
-            throw new LogicException(funtionName+" function require only one parameter AT["
-                    + generateProblemPosition(node.getChildAt(0).getData()) + "]");
+            throw new LogicException(funtionName + " function require only one parameter AT["
+                    + findExceptionPosition(terms, node.getChildAt(0).getData()) + "]");
         Node<Rule.Term> argumentNode = expFunction.getChildAt(0).getChildAt(0).getChildAt(0);
         int realType = defineTypeId(argumentNode);
-        if (realType != TYPE_DOUBLE) throw new WrongTypeException(funtionName+" function require only double value AT["
-                + generateProblemPosition(argumentNode.getChildAt(0).getData()) + "]");
+        if (realType != DOUBLE)
+            throw new WrongTypeException(funtionName + " function require only double value AT["
+                    + findExceptionPosition(terms, argumentNode.getChildAt(0).getData()) + "]");
     }
 
     private static void signatureQuadraticFunction(Node<Rule.Term> node, String funtionName) throws WrongTypeException, LogicException {
         Node<Rule.Term> quadraticFunction = node.getChildAt(2);
         if (quadraticFunction.getChildren().size() != 1)
-            throw new LogicException(funtionName+" function require only one parameter AT["
-                    + generateProblemPosition(node.getChildAt(0).getData()) + "]");
+            throw new LogicException(funtionName + " function require only one parameter AT["
+                    + findExceptionPosition(terms, node.getChildAt(0).getData()) + "]");
         Node<Rule.Term> argumentNode = quadraticFunction.getChildAt(0).getChildAt(0).getChildAt(0);
         int realType = defineTypeId(argumentNode);
-        if (realType != TYPE_DOUBLE) throw new WrongTypeException(funtionName+" function require only double value AT["
-                + generateProblemPosition(argumentNode.getChildAt(0).getData()) + "]");
-        if(funtionName.equals("sqrt"))
-        if (argumentNode.getChildAt(0).getData().smartGetString().charAt(0) == '-')
-            throw new LogicException(funtionName+" function require only POSITIVE double value AT["
-                    + generateProblemPosition(argumentNode.getChildAt(0).getData()) + "]");
+        if (realType != DOUBLE)
+            throw new WrongTypeException(funtionName + " function require only double value AT["
+                    + findExceptionPosition(terms, argumentNode.getChildAt(0).getData()) + "]");
+        if (funtionName.equals("sqrt"))
+            if (argumentNode.getChildAt(0).getData().smartGetString().charAt(0) == '-')
+                throw new LogicException(funtionName + " function require only POSITIVE double value AT["
+                        + findExceptionPosition(terms, argumentNode.getChildAt(0).getData()) + "]");
         checkIsCorrectType(quadraticFunction.getChildAt(0), realType);
     }
 
@@ -266,18 +252,18 @@ public class Semantic {
             }
         if (!isHave)
             throw new LogicException("No modification of cycle variable FOUND ["
-                    + generateProblemPosition(cycleNode.getChildAt(2).getChildAt(1).getData()) + "]");
+                    + findExceptionPosition(terms, cycleNode.getChildAt(2).getChildAt(1).getData()) + "]");
     }
 
     private static void findAssignmentVars(Node<Rule.Term> node, ArrayList<String> vars) {
 
         for (int i = 0; i < node.getChildren().size(); i++) {
             Node<Rule.Term> child = node.getChildAt(i);
-            if (child.getData().getString().equals(grammar.EXPRESSIONS_END))
+            if (child.getData().getString().equals(Grammar.getInstance().EXPRESSIONS_END))
                 child = child.getChildAt(0);
-            if (child.getData().getString().equals(grammar.EXPRESSIONS))
+            if (child.getData().getString().equals(Grammar.getInstance().EXPRESSIONS))
                 findAssignmentVars(child, vars);
-            else if (child.getData().getString().equals(grammar.EXPRESSION))
+            else if (child.getData().getString().equals(Grammar.getInstance().EXPRESSION))
                 child = child.getChildAt(0);
             switch (child.getData().getString()) {
                 case "ASSIGNMENT": {

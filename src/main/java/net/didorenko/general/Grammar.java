@@ -88,13 +88,13 @@ public class Grammar {
     public final Rule[] RULES = {
             //0
             new Rule(new Rule.Term(false, PROGRAM),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.RESERVED_WORDS[0]/* var */), new Rule.Term(false, DEFINES), new Rule.Term(true, LanguageKeywords.RESERVED_WORDS[1]/* begin */), new Rule.Term(false, EXPRESSIONS), new Rule.Term(true, LanguageKeywords.RESERVED_WORDS[5]/* end */)}),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.RESERVED_WORDS[0]/* var */), new Rule.Term(false, DEFINES), new Rule.Term(true, Keyword.RESERVED_WORDS[1]/* begin */), new Rule.Term(false, EXPRESSIONS), new Rule.Term(true, Keyword.RESERVED_WORDS[5]/* end */)}),
             //1
             new Rule(new Rule.Term(false, PROGRAM),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.RESERVED_WORDS[1]/* begin */), new Rule.Term(false, EXPRESSIONS), new Rule.Term(true, LanguageKeywords.RESERVED_WORDS[5]/* end */)}),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.RESERVED_WORDS[1]/* begin */), new Rule.Term(false, EXPRESSIONS), new Rule.Term(true, Keyword.RESERVED_WORDS[5]/* end */)}),
             //2
             new Rule(new Rule.Term(false, PROGRAM),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.RESERVED_WORDS[1]/* begin */), new Rule.Term(true, LanguageKeywords.RESERVED_WORDS[5]/* end */)}),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.RESERVED_WORDS[1]/* begin */), new Rule.Term(true, Keyword.RESERVED_WORDS[5]/* end */)}),
             //3
             new Rule(new Rule.Term(false, DEFINES),
                     new Rule.Term[]{new Rule.Term(false, DEFINE), new Rule.Term(false, DEFINES)}),
@@ -103,13 +103,13 @@ public class Grammar {
                     new Rule.Term[]{new Rule.Term(false, DEFINE)}),
             //5
             new Rule(new Rule.Term(false, DEFINE),
-                    new Rule.Term[]{new Rule.Term(false, TYPE), new Rule.Term(false, ONLY_ID), new Rule.Term(false, DEFINE_END)}),
+                    new Rule.Term[]{new Rule.Term(false, TYPE), new Rule.Term(true, Keyword.SYNTAX_SYMBOLS[3]), new Rule.Term(false, ONLY_ID), new Rule.Term(false, DEFINE_END)}),
             //6
             new Rule(new Rule.Term(false, DEFINE_END),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.SYNTAX_SYMBOLS[2]/* , */), new Rule.Term(false, ONLY_ID), new Rule.Term(false, DEFINE_END)}),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.SYNTAX_SYMBOLS[2]/* , */), new Rule.Term(false, ONLY_ID), new Rule.Term(false, DEFINE_END)}),
             //7
             new Rule(new Rule.Term(false, DEFINE_END),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.SYNTAX_SYMBOLS[1]/* ; */)}),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.SYNTAX_SYMBOLS[1]/* ; */)}),
             //8
             new Rule(new Rule.Term(false, EXPRESSIONS),
                     new Rule.Term[]{new Rule.Term(false, EXPRESSION), new Rule.Term(false, EXPRESSIONS_END)}),
@@ -133,7 +133,7 @@ public class Grammar {
                     new Rule.Term[]{new Rule.Term(false, METHOD)}),
             //15
             new Rule(new Rule.Term(false, ASSIGNMENT),
-                    new Rule.Term[]{new Rule.Term(false, ONLY_ID), new Rule.Term(true, LanguageKeywords.SYNTAX_SYMBOLS[0]/* := */), new Rule.Term(false, VALUE), new Rule.Term(true, LanguageKeywords.SYNTAX_SYMBOLS[1]/* ; */)}),
+                    new Rule.Term[]{new Rule.Term(false, ONLY_ID), new Rule.Term(true, Keyword.SYNTAX_SYMBOLS[0]/* := */), new Rule.Term(false, VALUE), new Rule.Term(true, Keyword.SYNTAX_SYMBOLS[1]/* ; */)}),
             //16
             new Rule(new Rule.Term(false, VALUE),
                     new Rule.Term[]{new Rule.Term(false, HP_MATH_EXPR), new Rule.Term(false, VALUE_END)}),
@@ -163,33 +163,33 @@ public class Grammar {
                     new Rule.Term[]{new Rule.Term(false, FUNCTION)}),
             //25
             new Rule(new Rule.Term(false, ARGUMENT),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.BRACKETS[0]/* ( */), new Rule.Term(false, VALUE), new Rule.Term(true, LanguageKeywords.BRACKETS[1]/* ) */)}),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.BRACKETS[0]/* ( */), new Rule.Term(false, VALUE), new Rule.Term(true, Keyword.BRACKETS[1]/* ) */)}),
             //26
             new Rule(new Rule.Term(false, FUNCTION),
-                    new Rule.Term[]{new Rule.Term(false, FUNC_NAME), new Rule.Term(true, LanguageKeywords.BRACKETS[0]/* ( */), new Rule.Term(false, FUNC_PARS), new Rule.Term(true, LanguageKeywords.BRACKETS[1]/* ) */)}),
+                    new Rule.Term[]{new Rule.Term(false, FUNC_NAME), new Rule.Term(true, Keyword.BRACKETS[0]/* ( */), new Rule.Term(false, FUNC_PARS), new Rule.Term(true, Keyword.BRACKETS[1]/* ) */)}),
             //27
             new Rule(new Rule.Term(false, FUNC_PARS),
                     new Rule.Term[]{new Rule.Term(false, VALUE), new Rule.Term(false, FUNC_PARS_END)}),
             //28
             new Rule(new Rule.Term(false, FUNC_PARS_END),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.SYNTAX_SYMBOLS[2]/* , */), new Rule.Term(false, VALUE), new Rule.Term(false, FUNC_PARS_END)}),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.SYNTAX_SYMBOLS[2]/* , */), new Rule.Term(false, VALUE), new Rule.Term(false, FUNC_PARS_END)}),
             //29
             new Rule(new Rule.Term(false, FUNC_PARS_END),
                     new Rule.Term[]{new Rule.Term(false, E)}),
             //30
             new Rule(new Rule.Term(false, CONDITION),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.RESERVED_WORDS[2]/* if */), new Rule.Term(true, LanguageKeywords.BRACKETS[0]/* ( */),
-                            new Rule.Term(false, COND_EXPR), new Rule.Term(true, LanguageKeywords.BRACKETS[1]/* ) */),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.RESERVED_WORDS[2]/* if */), new Rule.Term(true, Keyword.BRACKETS[0]/* ( */),
+                            new Rule.Term(false, COND_EXPR), new Rule.Term(true, Keyword.BRACKETS[1]/* ) */),
                             new Rule.Term(false, COND_END), new Rule.Term(false, ELSE_PART)}),
             //31
             new Rule(new Rule.Term(false, COND_END),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.RESERVED_WORDS[1]/* begin */), new Rule.Term(false, EXPRESSIONS), new Rule.Term(true, LanguageKeywords.RESERVED_WORDS[5]/* end */)}),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.RESERVED_WORDS[1]/* begin */), new Rule.Term(false, EXPRESSIONS), new Rule.Term(true, Keyword.RESERVED_WORDS[5]/* end */)}),
             //32
             new Rule(new Rule.Term(false, COND_END),
                     new Rule.Term[]{new Rule.Term(false, EXPRESSION)}),
             //33
             new Rule(new Rule.Term(false, ELSE_PART),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.RESERVED_WORDS[3]/* else */), new Rule.Term(false, COND_END)}),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.RESERVED_WORDS[3]/* else */), new Rule.Term(false, COND_END)}),
             //34
             new Rule(new Rule.Term(false, ELSE_PART),
                     new Rule.Term[]{new Rule.Term(false, E)}),
@@ -198,52 +198,52 @@ public class Grammar {
                     new Rule.Term[]{new Rule.Term(false, VALUE), new Rule.Term(false, BOOL_SIGN), new Rule.Term(false, VALUE)}),
             //36
             new Rule(new Rule.Term(false, CYCLE),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.RESERVED_WORDS[4]/* while */), new Rule.Term(true, LanguageKeywords.BRACKETS[0]/* ( */), new Rule.Term(false, COND_EXPR), new Rule.Term(true, LanguageKeywords.BRACKETS[1]/* ) */), new Rule.Term(false, COND_END)}),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.RESERVED_WORDS[4]/* while */), new Rule.Term(true, Keyword.BRACKETS[0]/* ( */), new Rule.Term(false, COND_EXPR), new Rule.Term(true, Keyword.BRACKETS[1]/* ) */), new Rule.Term(false, COND_END)}),
             //37
             new Rule(new Rule.Term(false, METHOD),
-                    new Rule.Term[]{new Rule.Term(false, MET_NAME), new Rule.Term(true, LanguageKeywords.BRACKETS[0]/* ( */), new Rule.Term(false, MET_PARS), new Rule.Term(true, LanguageKeywords.SYNTAX_SYMBOLS[1]/* ; */)}),
+                    new Rule.Term[]{new Rule.Term(false, MET_NAME), new Rule.Term(true, Keyword.BRACKETS[0]/* ( */), new Rule.Term(false, MET_PARS), new Rule.Term(true, Keyword.SYNTAX_SYMBOLS[1]/* ; */)}),
             //38
             new Rule(new Rule.Term(false, MET_PARS),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.BRACKETS[1]/* ) */)}),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.BRACKETS[1]/* ) */)}),
             //39
             new Rule(new Rule.Term(false, MET_PARS),
-                    new Rule.Term[]{new Rule.Term(false, VALUE), new Rule.Term(false, MET_PARS_END), new Rule.Term(true, LanguageKeywords.BRACKETS[1]/* ) */)}),
+                    new Rule.Term[]{new Rule.Term(false, VALUE), new Rule.Term(false, MET_PARS_END), new Rule.Term(true, Keyword.BRACKETS[1]/* ) */)}),
             //40
             new Rule(new Rule.Term(false, MET_PARS_END),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.SYNTAX_SYMBOLS[2]/* , */), new Rule.Term(false, VALUE), new Rule.Term(false, MET_PARS_END)}),
+                    new Rule.Term[]{new Rule.Term(true, Keyword.SYNTAX_SYMBOLS[2]/* , */), new Rule.Term(false, VALUE), new Rule.Term(false, MET_PARS_END)}),
             //41
             new Rule(new Rule.Term(false, MET_PARS_END),
                     new Rule.Term[]{new Rule.Term(false, E)}),
             //42
             new Rule(new Rule.Term(false, ARGUMENT),
-                    new Rule.Term[]{new Rule.Term(true, LanguageKeywords.BRACKETS[4]/* " */), new Rule.Term(false, STRING), new Rule.Term(true, LanguageKeywords.BRACKETS[4]/* " */)})
+                    new Rule.Term[]{new Rule.Term(true, Keyword.BRACKETS[2]/* " */), new Rule.Term(false, STRING), new Rule.Term(true, Keyword.BRACKETS[2]/* " */)})
     };
     //endregion
 
     //region HELPER
     public final RuleMatcher[] HELPER = {
-            new RuleMatcher(0, new String[]{LanguageKeywords.RESERVED_WORDS[0]/* var */}),
-            new RuleMatcher(2, new String[]{LanguageKeywords.RESERVED_WORDS[1]/* begin */, LanguageKeywords.RESERVED_WORDS[5]/* end */}),
-            new RuleMatcher(4, new String[]{LanguageKeywords.SYNTAX_SYMBOLS[1]/* ; */, LanguageKeywords.RESERVED_WORDS[1]/* begin */}),
-            new RuleMatcher(6, new String[]{LanguageKeywords.SYNTAX_SYMBOLS[2]/* , */}),
-            new RuleMatcher(7, new String[]{LanguageKeywords.SYNTAX_SYMBOLS[1]/* ; */}),
+            new RuleMatcher(0, new String[]{Keyword.RESERVED_WORDS[0]/* var */}),
+            new RuleMatcher(2, new String[]{Keyword.RESERVED_WORDS[1]/* begin */, Keyword.RESERVED_WORDS[5]/* end */}),
+            new RuleMatcher(4, new String[]{Keyword.SYNTAX_SYMBOLS[1]/* ; */, Keyword.RESERVED_WORDS[1]/* begin */}),
+            new RuleMatcher(6, new String[]{Keyword.SYNTAX_SYMBOLS[2]/* , */}),
+            new RuleMatcher(7, new String[]{Keyword.SYNTAX_SYMBOLS[1]/* ; */}),
             new RuleMatcher(9, new String[]{}), //to differentScan
             new RuleMatcher(11, new String[]{ONLY_ID}),
-            new RuleMatcher(12, new String[]{LanguageKeywords.RESERVED_WORDS[2]/* if */}),
-            new RuleMatcher(13, new String[]{LanguageKeywords.RESERVED_WORDS[4]/* while */}),
+            new RuleMatcher(12, new String[]{Keyword.RESERVED_WORDS[2]/* if */}),
+            new RuleMatcher(13, new String[]{Keyword.RESERVED_WORDS[4]/* while */}),
             new RuleMatcher(14, new String[]{MET_NAME}),
             new RuleMatcher(17, new String[]{LP_SIGN}),
             new RuleMatcher(20, new String[]{HP_SIGN}),
             new RuleMatcher(22, new String[]{ID}),
             new RuleMatcher(23, new String[]{NUMBER}),
             new RuleMatcher(24, new String[]{FUNC_NAME}),
-            new RuleMatcher(25, new String[]{LanguageKeywords.BRACKETS[0]/* ( */}),
-            new RuleMatcher(42, new String[]{LanguageKeywords.BRACKETS[4]/* " */}),
-            new RuleMatcher(28, new String[]{LanguageKeywords.SYNTAX_SYMBOLS[2]/* , */}),
-            new RuleMatcher(31, new String[]{LanguageKeywords.RESERVED_WORDS[1]/* { */}),
-            new RuleMatcher(33, new String[]{LanguageKeywords.RESERVED_WORDS[3]/* else */}),
-            new RuleMatcher(38, new String[]{LanguageKeywords.BRACKETS[1]/* ) */}),
-            new RuleMatcher(40, new String[]{LanguageKeywords.SYNTAX_SYMBOLS[2]/* , */})
+            new RuleMatcher(25, new String[]{Keyword.BRACKETS[0]/* ( */}),
+            new RuleMatcher(42, new String[]{Keyword.BRACKETS[2]/* " */}),
+            new RuleMatcher(28, new String[]{Keyword.SYNTAX_SYMBOLS[2]/* , */}),
+            new RuleMatcher(31, new String[]{Keyword.RESERVED_WORDS[1]/* { */}),
+            new RuleMatcher(33, new String[]{Keyword.RESERVED_WORDS[3]/* else */}),
+            new RuleMatcher(38, new String[]{Keyword.BRACKETS[1]/* ) */}),
+            new RuleMatcher(40, new String[]{Keyword.SYNTAX_SYMBOLS[2]/* , */})
     };
     //endregion
 

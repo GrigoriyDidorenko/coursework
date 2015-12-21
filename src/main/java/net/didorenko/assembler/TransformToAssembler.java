@@ -18,7 +18,7 @@ public class TransformToAssembler {
 
     private Node<Rule.Term> root;
     private ArrayList<Variable> ids;
-    private StringBuilder outText = new StringBuilder("%include \"net.didorenko.io.inc\"\n" //default start imports
+    private StringBuilder outText = new StringBuilder("%include \"io.inc\"\n"
             + "extern printf\n\n");
 
     public TransformToAssembler(Node<Rule.Term> root, ArrayList<Variable> ids) {
