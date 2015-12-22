@@ -3,7 +3,7 @@ extern printf
 
 section .data
 rez dd 0
-printText1 db 'rez > 0', 10, 0
+printText1 db 'i am inside if block', 10, 0
 printText2 db 'result is %f', 10, 0
 section .text
 global CMAIN

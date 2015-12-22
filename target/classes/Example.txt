@@ -1,18 +1,10 @@
 var
-     int : counter, N;
 	 double : rez;
 begin
-	counter:=1;
-	rez:=exp(1.0,2);
-	rez:=sqrt(1.0);
-	N:=5;
-	if (counter < N)
+	rez:=exp(-6.0,2);
+	if (rez = 36)
 	begin
-	counter := counter+1;
+	writeln("i\wam\winside\wif\wblock");
 	end
-	while (counter < N)
-	begin
-		counter := counter+1;
-	end
-	writeln("So,\wthe\wfactorial\wof\w", N, "\wis\w", rez);
+	writeln("result\wis\w", rez);
 end

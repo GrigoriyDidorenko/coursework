@@ -7,6 +7,15 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * package: net.didorenko.exception
+ * project: coursework
+ * class:
+ *
+ * @author: Grigoriy Didorenko
+ * @date: 21.12.2015
+ */
+
 public class ReadWriteFile {
 
     public static String loadFromFile(String path) throws ReadWriteException {

@@ -4,12 +4,21 @@ import net.didorenko.general.Grammar;
 import net.didorenko.general.Rule;
 import net.didorenko.tree.node.parts.Variable;
 
+/**
+ * package: net.didorenko.exception
+ * project: coursework
+ * class:
+ *
+ * @author: Grigoriy Didorenko
+ * @date: 18.12.2015
+ */
+
 public class NodeData {
 
     private Rule.Term term;
-    private String additionalData; //if term - TYPE - typeName, or if NUMBER - numberValue, or if MET_NAME - methodName,
-                                    // or if FUNC_NAME - mathFunctionName, else - null
-    private Variable variable; //if term - ID - variable, else - null
+    private String additionalData; 
+                                    
+    private Variable variable; 
 
     public NodeData(Rule.Term term) {
         this.term = term;

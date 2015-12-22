@@ -6,12 +6,14 @@ import net.didorenko.tree.node.parts.Variable;
 
 import java.util.ArrayList;
 
+
+
 public class TransformToAssembler {
 
-    private static final int TYPE_UNDEFINED = -1;
-    private static final int TYPE_INT = 1;
-    private static final int TYPE_DOUBLE = 2;
-    private static final int TYPE_STRING = 3;
+    private static final int UNDEFINED = -1;
+    private static final int INT = 1;
+    private static final int DOUBLE = 2;
+    private static final int STRING = 3;
 
     private int currentAvailableLabel = 1;
     private int currentAvailableText = 1;
@@ -39,7 +41,9 @@ public class TransformToAssembler {
         outText.append("CMAIN:\n");
         outText.append("mov ebp, esp\n\n");
         genProgramm();
+        outText.append("xor eax, eax\n");
         outText.append("mov esp, ebp\n");
+        outText.append("ret\n");
     }
 
     private void genProgramm() {
@@ -111,9 +115,9 @@ public class TransformToAssembler {
 
     private void genAssignment(Node<Rule.Term> node, StringBuilder appendingDestination) {
         StringBuilder assignment = new StringBuilder();
-        int varType = TYPE_UNDEFINED;
+        int varType = UNDEFINED;
         varType = defineTypeId(node, varType);
-        if (varType != TYPE_STRING) {
+        if (varType != STRING) {
             genValue(node.getChildAt(2), assignment, varType);
             assignment.append("mov dword[").append(node.getChildAt(0).getData().smartGetString()).append("], eax\n");
         } else assignValue(node.getChildAt(0).getData().smartGetString(),
@@ -127,8 +131,8 @@ public class TransformToAssembler {
         genArgument(children.get(0), hpMExp, varType);
         if (children.size() == 2) {
             switch (varType) {
-                case TYPE_DOUBLE:
-                case TYPE_INT: {
+                case DOUBLE:
+                case INT: {
                     hpMExp.append("push eax\n");
                     genHpMExp(children.get(1).getChildAt(1), hpMExp, varType);
                     hpMExp.append("mov ebx, eax\n");
@@ -136,9 +140,7 @@ public class TransformToAssembler {
                     genBinOperation(children.get(1).getChildAt(0).getData().smartGetString(), hpMExp, varType);
                     break;
                 }
-                /*case TYPE_STRING : {
-                    break;
-                }*/
+                
             }
         }
         value.append(hpMExp);
@@ -150,8 +152,8 @@ public class TransformToAssembler {
         genHpMExp(children.get(0), value, varType);
         if (children.size() == 2) {
             switch (varType) {
-                case TYPE_DOUBLE:
-                case TYPE_INT: {
+                case DOUBLE:
+                case INT: {
                     value.append("push eax\n");
                     genValue(children.get(1).getChildAt(1), value, varType);
                     value.append("mov ebx, eax\n");
@@ -167,7 +169,7 @@ public class TransformToAssembler {
     private void genBinOperation(String sign, StringBuilder source, int varType) {
         StringBuilder binOperation = new StringBuilder();
         switch (varType) {
-            case TYPE_INT: {
+            case INT: {
                 switch (sign) {
                     case "+": {
                         binOperation.append("add ");
@@ -192,7 +194,7 @@ public class TransformToAssembler {
                 }
                 break;
             }
-            case TYPE_DOUBLE: {
+            case DOUBLE: {
                 binOperation.append("push eax\n");
                 binOperation.append("fld dword[esp]\n");
                 binOperation.append("push ebx\n");
@@ -229,19 +231,19 @@ public class TransformToAssembler {
         ArrayList<Node<Rule.Term>> children = (ArrayList<Node<Rule.Term>>) node.getChildren();
         switch (children.size()) {
             case 1: {
-                if (varType == TYPE_UNDEFINED) defineTypeId(children.get(0), varType);
+                if (varType == UNDEFINED) defineTypeId(children.get(0), varType);
                 Node<Rule.Term> child = children.get(0);
                 String childStringDate = child.getData().smartGetString();
                 boolean isMinus = childStringDate.charAt(0) == '-';
                 if (isMinus) childStringDate = childStringDate.substring(1);
                 switch (varType) {
-                    case TYPE_INT: {
+                    case INT: {
                         if (child.getData().getVariable() != null) childStringDate = "dword [" + childStringDate + "]";
                         argument.append("mov eax, ").append(childStringDate).append("\n");
                         if (isMinus) argument.append("neg eax\n");
                         break;
                     }
-                    case TYPE_DOUBLE: {
+                    case DOUBLE: {
                         if (childStringDate.equals("FUNCTION")) {
                             genFunction(child, argument);
                             break;
@@ -265,7 +267,7 @@ public class TransformToAssembler {
                         }
                         break;
                     }
-                    case TYPE_STRING: {
+                    case STRING: {
                         addStringVar(childStringDate);
                         break;
                     }
@@ -288,25 +290,25 @@ public class TransformToAssembler {
 
         if (inspectingTerm.smartGetString().equals("\"")) {
             inspectingTerm = node.getChildAt(1).getData();
-            return TYPE_STRING;
+            return STRING;
         }
 
         if (inspectingTerm.getVariable() == null) {
             if (inspectingTerm.getString().equals("FUNCTION") || inspectingTerm.getValue().contains("."))
-                return TYPE_DOUBLE;
-            return TYPE_INT;
+                return DOUBLE;
+            return INT;
         } else {
             switch (inspectingTerm.getVariable().getVariableType()) {
                 case "int": {
-                    varType = TYPE_INT;
+                    varType = INT;
                     break;
                 }
                 case "double": {
-                    varType = TYPE_DOUBLE;
+                    varType = DOUBLE;
                     break;
                 }
                 case "string": {
-                    varType = TYPE_STRING;
+                    varType = STRING;
                     break;
                 }
             }
@@ -316,7 +318,7 @@ public class TransformToAssembler {
 
     private void genCondExpression(Node<Rule.Term> node, StringBuilder condition) {
         StringBuilder condExpression = new StringBuilder();
-        int varType = TYPE_UNDEFINED;
+        int varType = UNDEFINED;
         varType = defineTypeId(node.getChildAt(0).getChildAt(0).getChildAt(0), varType);
         genValue(node.getChildAt(0), condExpression, varType);
         condExpression.append("push eax\n");
@@ -324,11 +326,11 @@ public class TransformToAssembler {
         condExpression.append("mov ebx, eax\n");
         condExpression.append("pop eax\n");
         switch (varType) {
-            case TYPE_INT: {
+            case INT: {
                 condExpression.append("cmp eax, ebx\n");
                 break;
             }
-            case TYPE_DOUBLE: {
+            case DOUBLE: {
                 condExpression.append("push ebx\n");
                 condExpression.append("fld dword[esp]\n");
                 condExpression.append("pop ebx\n");
@@ -344,7 +346,7 @@ public class TransformToAssembler {
                 condExpression.append("jne ");
                 break;
             }
-            case "!=": {
+            case "<>": {
                 condExpression.append("je ");
                 break;
             }
@@ -422,12 +424,12 @@ public class TransformToAssembler {
 
     private boolean genSinglePrintParsValue(Node<Rule.Term> valueNode, StringBuilder printPars, StringBuilder outputFormat) {
         Node<Rule.Term> argumentTerm = valueNode.getChildAt(0).getChildAt(0);
-        int valueType = TYPE_UNDEFINED;
+        int valueType = UNDEFINED;
         valueType = defineTypeId(argumentTerm, valueType);
         boolean isStringVar = false;
 
         switch (valueType) {
-            case TYPE_STRING: {
+            case STRING: {
                 if (argumentTerm.getChildAt(0).getData().getVariable() != null) {
                     isStringVar = true;
                     outputFormat.append(argumentTerm.getChildAt(0).getData().smartGetString()).append("\n");
@@ -436,13 +438,13 @@ public class TransformToAssembler {
                 outputFormat.append(argumentTerm.getChildAt(1).getData().smartGetString());
                 break;
             }
-            case TYPE_INT: {
+            case INT: {
                 outputFormat.append("%d");
                 genValue(valueNode, printPars, valueType);
                 printPars.append("push eax\n");
                 break;
             }
-            case TYPE_DOUBLE: {
+            case DOUBLE: {
                 outputFormat.append("%f");
                 genValue(valueNode, printPars, valueType);
                 printPars.append("push eax\n");
@@ -461,13 +463,13 @@ public class TransformToAssembler {
         StringBuilder outputFormat = new StringBuilder("");
 
         if (node.getChildren().size() == 1) {
-            addStringVar(outputFormat.toString()); //increments currentAvailableText
+            addStringVar(outputFormat.toString()); 
             printPars.append("push dword printText").append(currentAvailableText - 1).append("\n");
         } else {
             if (node.getChildren().size() == 2) {
                 boolean isStringVar = genSinglePrintParsValue(node.getChildAt(0), printPars, outputFormat);
                 if (!isStringVar) {
-                    addStringVar(outputFormat.toString()); //increments currentAvailableText
+                    addStringVar(outputFormat.toString()); 
                     printPars.append("push dword printText").append(currentAvailableText - 1).append("\n");
                 } else printPars.append("push dword ").append(outputFormat.toString());
             } else {
@@ -480,7 +482,7 @@ public class TransformToAssembler {
                     innerOutputFormat.insert(0, "%");
                 }
                 outputFormat.insert(0, innerOutputFormat);
-                addStringVar(outputFormat.toString()); //increments currentAvailableText
+                addStringVar(outputFormat.toString()); 
                 printPars.append("push dword printText").append(currentAvailableText - 1).append("\n");
             }
         }
@@ -506,7 +508,7 @@ public class TransformToAssembler {
 
         switch (functionName) {
             case "sqrt": {
-                genValue(node.getChildAt(2).getChildAt(0), function, TYPE_DOUBLE);
+                genValue(node.getChildAt(2).getChildAt(0), function, DOUBLE);
                 function.append("push eax\n");
                 function.append("fld dword[esp]\n");
                 function.append("fsqrt\n");
@@ -514,13 +516,35 @@ public class TransformToAssembler {
                 function.append("pop eax\n");
                 break;
             }
+
             case "exp": {
-                genValue(node.getChildAt(2).getChildAt(0), function, TYPE_DOUBLE);
+                genValue(node.getChildAt(2).getChildAt(0), function, DOUBLE);
                 function.append("push eax\n");
-                function.append("fld dword[esp]\n");
-                function.append("fsqrt\n");
-                function.append("fstp dword[esp]\n");
+                genValue(node.getChildAt(2).getChildAt(1).getChildAt(1), function, INT);
+                function.append("mov ebx, eax\n");
                 function.append("pop eax\n");
+                function.append("push eax\n");
+                function.append("cmp ebx, 0\n" +
+                        " je ifzero" + currentAvailableLabel + "\n" +
+                        " pow" + currentAvailableLabel + ":\n" +
+                        " dec ebx\n" +
+                        " cmp ebx, 0\n" +
+                        " je endpow" + currentAvailableLabel + "\n" +
+                        " \n" +
+                        " fld dword[esp]\n" +
+                        " push eax\n" +
+                        " fld dword[esp]\n" +
+                        " fmulp\n" +
+                        " fstp dword[esp]\n" +
+                        " pop eax\n" +
+                        " jmp pow" + currentAvailableLabel + "\n" +
+                        " ifzero" + currentAvailableLabel + ":\n" +
+                        " mov eax, 1\n" +
+                        " endpow" + currentAvailableLabel + ":\n" +
+                        " mov ebx, eax\n" +
+                        " pop eax\n" +
+                        " mov eax, ebx\n");
+                currentAvailableLabel++;
                 break;
             }
         }
@@ -538,13 +562,11 @@ public class TransformToAssembler {
 
 
     private void addStringVar(String format) {
-        int textStartPosition = outText.indexOf("section .text"); //outStrFormat db "", 10, 0
+        int textStartPosition = outText.indexOf("section .text"); 
         outText.insert(textStartPosition, "printText" + currentAvailableText + " db '" + format + "', 10, 0\n");
         currentAvailableText++;
     }
 
 
-    /*private void genScan(Node<Rule.Term> node, StringBuilder method) {
-
-    }*/
+    
 }

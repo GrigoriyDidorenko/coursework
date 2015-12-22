@@ -14,11 +14,20 @@ import net.didorenko.syntaxical.UnexpectedSymbolException;
 
 import java.io.FileNotFoundException;
 
+/**
+ * package: net.didorenko.exception
+ * project: coursework
+ * class:
+ *
+ * @author: Grigoriy Didorenko
+ * @date: 16.12.2015
+ */
+
 public class Main {
 
     public static void main(String[] args) {
 
-        String path = "src\\main\\resources\\Example.txt";
+        String path = "src\\main\\resources\\example.txt";
         try {
             compile(path, path.replace(".txt", ".asm"));
         } catch (Exception e) {

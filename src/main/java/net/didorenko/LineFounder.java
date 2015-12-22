@@ -1,4 +1,4 @@
-package net.didorenko.exception;
+package net.didorenko;
 
 import net.didorenko.general.Rule;
 import net.didorenko.lexer.Lexical;
@@ -12,8 +12,9 @@ import java.util.Arrays;
  * class:
  *
  * @author: Grigoriy Didorenko
- * @date: 21.12.2015
+ * @date: 16.12.2015
  */
+
 public abstract class LineFounder {
 
     public static String findExceptionPosition(int inTermsPosition, ArrayList<Integer> lineIndexes) {

@@ -4,6 +4,15 @@ import net.didorenko.tree.node.parts.Variable;
 
 import java.util.Arrays;
 
+/**
+ * package: net.didorenko.exception
+ * project: coursework
+ * class:
+ *
+ * @author: Grigoriy Didorenko
+ * @date: 17.12.2015
+ */
+
 public class Rule {
 
     private Term parent;
@@ -34,9 +43,9 @@ public class Rule {
         private boolean isTerminal;
         private String string;
 
-        private String value; //if term - TYPE - typeName, or if NUMBER - numberValue, or if MET_NAME - methodName,
-                                        // or if FUNC_NAME - mathFunctionName, else - null
-        private Variable variable; //if term - ID - variable, else - null
+        private String value; 
+                                        
+        private Variable variable; 
 
         public Term(boolean isTerminal, String string) {
             this.isTerminal = isTerminal;

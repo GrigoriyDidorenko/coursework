@@ -1,5 +1,15 @@
 package net.didorenko.tree.node.parts;
 
+
+/**
+ * package: net.didorenko.exception
+ * project: coursework
+ * class:
+ *
+ * @author: Grigoriy Didorenko
+ * @date: 18.12.2015
+ */
+
 public class Variable {
 
     private String variableName;

@@ -2,6 +2,15 @@ package net.didorenko.general;
 
 import java.util.Arrays;
 
+/**
+ * package: net.didorenko.exception
+ * project: coursework
+ * class:
+ *
+ * @author: Grigoriy Didorenko
+ * @date: 21.12.2015
+ */
+
 public class Keyword {
 
     public static final String[] TYPES = {"int", "double", "string"};
@@ -11,7 +20,7 @@ public class Keyword {
     public static final String[] ALL_WORDS = concatAll(TYPES, RESERVED_WORDS, METHODS, MATH_FUNCTIONS);
     public static final String[] MATH_OPERATIONS = {"+", "-", "*", "/"};
     public static final String[] BRACKETS = {"(", ")", "\""};
-    public static final String[] BOOL_OPERATIONS = {"<", ">", "=", "!="};
+    public static final String[] BOOL_OPERATIONS = {"<>", "<", ">", "="};
     public static final String[] SYNTAX_SYMBOLS = {":=", ";", ",", ":"};
 
     public static final String SYMBOLS_TO_CONTINUE = "\\+|-|\\*|/|<|>|=|!=|:=|\\(";

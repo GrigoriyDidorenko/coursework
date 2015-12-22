@@ -7,6 +7,15 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * package: net.didorenko.exception
+ * project: coursework
+ * class:
+ *
+ * @author: Grigoriy Didorenko
+ * @date: 17.12.2015
+ */
+
 public class Lexical {
 
     private static String incomeText;
@@ -47,7 +56,7 @@ public class Lexical {
 
                     if (word.indexOf(Keyword.ALL_KEYWORDS[j]) == i) {
 
-                        if (Keyword.ALL_KEYWORDS[j].equals(Keyword.BRACKETS[2]/* " */))
+                        if (Keyword.ALL_KEYWORDS[j].equals(Keyword.BRACKETS[2]))
                             isString = !isString;
                         else if (isString) continue;
 
@@ -59,19 +68,19 @@ public class Lexical {
                                 continue;
                         }
 
-//                        if (Keyword.ALL_KEYWORDS[j].equals(Keyword.MATH_OPERATIONS[1]/* - */)
-//                                && word.charAt(0) == '-'
-//                                && (tokens.get(tokens.size() - 1).equals(Keyword.BRACKETS[0]/* ( */)
-//                                || tokens.get(tokens.size() - 1).equals(Keyword.SYNTAX_SYMBOLS[0]/* := */)
-//                                || tokens.get(tokens.size() - 1).equals(Keyword.MATH_OPERATIONS[0]/* + */)
-//                                || tokens.get(tokens.size() - 1).equals(Keyword.MATH_OPERATIONS[1]/* - */)
-//                                || tokens.get(tokens.size() - 1).equals(Keyword.MATH_OPERATIONS[2]/* * */)
-//                                || tokens.get(tokens.size() - 1).equals(Keyword.MATH_OPERATIONS[3]/* / */)
-//                                || tokens.get(tokens.size() - 1).equals(Keyword.BOOL_OPERATIONS[0]/* < */)
-//                                || tokens.get(tokens.size() - 1).equals(Keyword.BOOL_OPERATIONS[1]/* > */)
-//                                || tokens.get(tokens.size() - 1).equals(Keyword.BOOL_OPERATIONS[2]/* = */)
-//                                || tokens.get(tokens.size() - 1).equals(Keyword.BOOL_OPERATIONS[3]/* != */)))
-//                            continue;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                         if (Arrays.asList(Keyword.ALL_WORDS).contains(Keyword.ALL_KEYWORDS[j]) &&
                                 word.length() > Keyword.ALL_KEYWORDS[j].length())

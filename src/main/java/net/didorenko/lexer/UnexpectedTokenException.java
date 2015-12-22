@@ -6,7 +6,7 @@ package net.didorenko.lexer;
  * class:
  *
  * @author: Grigoriy Didorenko
- * @date: 21.12.2015
+ * @date: 17.12.2015
  */
 public class UnexpectedTokenException extends Exception {
 

@@ -1,6 +1,15 @@
 package net.didorenko.syntaxical;
 
-import net.didorenko.exception.LineFounder;
+/**
+ * package: net.didorenko.exception
+ * project: coursework
+ * class:
+ *
+ * @author: Grigoriy Didorenko
+ * @date: 18.12.2015
+ */
+
+import net.didorenko.LineFounder;
 import net.didorenko.general.Grammar;
 import net.didorenko.general.Keyword;
 import net.didorenko.general.Rule;
@@ -10,6 +19,8 @@ import net.didorenko.tree.node.parts.Variable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+
 
 public class Syntactical extends LineFounder {
 
@@ -56,7 +67,7 @@ public class Syntactical extends LineFounder {
             if (inToInspectingTerm.isTerminalOrReserved()) {
                 if (!isCorrect(inToInspectingTerm.getString(), currentPosition)) error();
                 else {
-                    Node<Rule.Term> newChildren = new Node<>(terms[currentPosition]/*new Rule.Term(true, inToInspectingTerm.getString())*/);
+                    Node<Rule.Term> newChildren = new Node<>(terms[currentPosition]);
                     newChildren.setParent(inspectingNode);
                     inspectingNode.addChild(newChildren);
                     currentPosition++;
@@ -124,13 +135,13 @@ public class Syntactical extends LineFounder {
 
     private static void analyzeToken(int inTermsPosition) throws UndeclaredVariableException, UnexpectedSymbolException {
         String termString = terms[inTermsPosition].getString();
-        if (termString.equals(Keyword.RESERVED_WORDS[1]/* begin */)) inBody = true;
+        if (termString.equals(Keyword.RESERVED_WORDS[1])) inBody = true;
 
-        //������������� �� ������ � ������. ������: -4 ��� -name
+        
         boolean isMinus = (termString.charAt(0) == '-') && (termString.length() != 1);
         if (isMinus) termString = termString.substring(1);
 
-        //�������� �� �����
+        
         boolean isNumber = true;
         for (int i = 0; i < termString.length(); i++) {
             if (!Character.isDigit(termString.charAt(i)) && termString.charAt(i) != '.') {
@@ -146,7 +157,7 @@ public class Syntactical extends LineFounder {
             return;
         }
 
-        //�������� �� ���
+        
         if (Keyword.isType(termString)) {
             Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().TYPE);
             newTerm.setValue(termString);
@@ -155,7 +166,7 @@ public class Syntactical extends LineFounder {
             return;
         }
 
-        //�������� �� ��� ������
+        
         if (Keyword.isMethod(termString)) {
             Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().MET_NAME);
             newTerm.setValue(termString);
@@ -163,7 +174,7 @@ public class Syntactical extends LineFounder {
             return;
         }
 
-        //�������� �� ��� ����������
+        
         if (Keyword.isMathFunction(termString)) {
             Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().FUNC_NAME);
             newTerm.setValue(termString);
@@ -171,36 +182,36 @@ public class Syntactical extends LineFounder {
             return;
         }
 
-        //�������� �� BOOL_SIGN
-        if (termString.equals(Keyword.BOOL_OPERATIONS[0]/* < */) ||
-                termString.equals(Keyword.BOOL_OPERATIONS[1]/* > */) ||
-                termString.equals(Keyword.BOOL_OPERATIONS[2]/* = */) ||
-                termString.equals(Keyword.BOOL_OPERATIONS[3]/* != */)) {
+        
+        if (termString.equals(Keyword.BOOL_OPERATIONS[0]) ||
+                termString.equals(Keyword.BOOL_OPERATIONS[1]) ||
+                termString.equals(Keyword.BOOL_OPERATIONS[2]) ||
+                termString.equals(Keyword.BOOL_OPERATIONS[3])) {
             Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().BOOL_SIGN);
             newTerm.setValue(termString);
             terms[inTermsPosition] = newTerm;
             return;
         }
 
-        //�������� �� HP_SIGN
-        if (termString.equals(Keyword.MATH_OPERATIONS[2]/* * */) ||
-                termString.equals(Keyword.MATH_OPERATIONS[3]/* / */)) {
+        
+        if (termString.equals(Keyword.MATH_OPERATIONS[2]) ||
+                termString.equals(Keyword.MATH_OPERATIONS[3])) {
             Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().HP_SIGN);
             newTerm.setValue(termString);
             terms[inTermsPosition] = newTerm;
             return;
         }
 
-        //�������� �� LP_SIGN
-        if (termString.equals(Keyword.MATH_OPERATIONS[0]/* + */) ||
-                termString.equals(Keyword.MATH_OPERATIONS[1]/* - */)) {
+        
+        if (termString.equals(Keyword.MATH_OPERATIONS[0]) ||
+                termString.equals(Keyword.MATH_OPERATIONS[1])) {
             Rule.Term newTerm = new Rule.Term(false, Grammar.getInstance().LP_SIGN);
             newTerm.setValue(termString);
             terms[inTermsPosition] = newTerm;
             return;
         }
 
-        //�������� �� STRING
+        
         if (inTermsPosition != 0
                 && terms[inTermsPosition - 1].getString().equals("\"")
                 && terms[inTermsPosition + 1].getString().equals("\"")
@@ -246,8 +257,8 @@ public class Syntactical extends LineFounder {
             case 9: {
                 String s = terms[currentPosition].getString();
                 return s.equals(Grammar.getInstance().ONLY_ID)
-                        || s.equals(Keyword.RESERVED_WORDS[2]/* if */)
-                        || s.equals(Keyword.RESERVED_WORDS[4]/* while */)
+                        || s.equals(Keyword.RESERVED_WORDS[2])
+                        || s.equals(Keyword.RESERVED_WORDS[4])
                         || s.equals(Grammar.getInstance().MET_NAME);
             }
         }

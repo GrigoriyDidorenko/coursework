@@ -1,12 +1,21 @@
 package net.didorenko.semantic;
 
-import net.didorenko.exception.LineFounder;
+import net.didorenko.LineFounder;
 import net.didorenko.general.Grammar;
 import net.didorenko.general.Rule;
 import net.didorenko.syntaxical.Syntactical;
 import net.didorenko.tree.Node;
 
 import java.util.ArrayList;
+
+/**
+ * package: net.didorenko.exception
+ * project: coursework
+ * class:
+ *
+ * @author: Grigoriy Didorenko
+ * @date: 18.12.2015
+ */
 
 public class Semantic extends LineFounder {
 
@@ -211,13 +220,15 @@ public class Semantic extends LineFounder {
     private static void signatureExpFunction(Node<Rule.Term> node, String funtionName) throws WrongTypeException, LogicException {
         Node<Rule.Term> expFunction = node.getChildAt(2);
         if (expFunction.getChildren().size() != 2)
-            throw new LogicException(funtionName + " function require only one parameter AT["
+            throw new LogicException(funtionName + " function requires only one parameter AT["
                     + findExceptionPosition(terms, node.getChildAt(0).getData()) + "]");
-        Node<Rule.Term> argumentNode = expFunction.getChildAt(0).getChildAt(0).getChildAt(0);
-        int realType = defineTypeId(argumentNode);
-        if (realType != DOUBLE)
+        Node<Rule.Term> numberToDegree = expFunction.getChildAt(0).getChildAt(0).getChildAt(0);
+        Node<Rule.Term> degree = expFunction.getChildAt(1).getChildAt(1).getChildAt(0).getChildAt(0);
+        int intType = defineTypeId(degree);
+        int realType = defineTypeId(numberToDegree);
+        if (realType != DOUBLE || intType != INT)
             throw new WrongTypeException(funtionName + " function require only double value AT["
-                    + findExceptionPosition(terms, argumentNode.getChildAt(0).getData()) + "]");
+                    + findExceptionPosition(terms, degree.getChildAt(0).getData()) + "]");
     }
 
     private static void signatureQuadraticFunction(Node<Rule.Term> node, String funtionName) throws WrongTypeException, LogicException {
