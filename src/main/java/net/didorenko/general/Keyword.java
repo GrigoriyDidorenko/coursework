@@ -23,6 +23,7 @@ public class Keyword {
     public static final String[] BOOL_OPERATIONS = {"<>", "<", ">", "="};
     public static final String[] SYNTAX_SYMBOLS = {":=", ";", ",", ":"};
 
+
     public static final String SYMBOLS_TO_CONTINUE = "\\+|-|\\*|/|<|>|=|!=|:=|\\(";
 
     public static final String[] ALL_KEYWORDS = concatAll(ALL_WORDS, METHODS, MATH_OPERATIONS, BRACKETS, BOOL_OPERATIONS, SYNTAX_SYMBOLS);
